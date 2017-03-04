@@ -1,4 +1,4 @@
-#LASSIE release 1.0.0
+#LASSIE 1.0.0 (beta)
 
 ## ABOUT
 
