@@ -25,7 +25,7 @@ LASSIE's binary can be compiled on any supported architecture (e.g., GNU/Linux, 
 The script would create a binary executable file runnable on GPUs with _at least_ a compute capability equal to 2.0. 
 
 
-## LAUNCHING CUPSODA
+## LAUNCHING LASSIE
 
 LASSIE is designed to be launched from the command line. The arguments are: 
 
