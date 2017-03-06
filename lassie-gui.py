@@ -5,7 +5,12 @@ import sys
 from subprocess import check_output, Popen, call
 from platform import platform
 from pylab import *
-from SBML2BSW import SBMLloader
+try:
+	from SBML2BSW import SBMLloader
+	use_sbml = True
+except:
+	print "WARNING: libsbml not found"
+	use_sbml = False
 
 import resources_rc
 
@@ -36,6 +41,9 @@ class MyWindow(QtGui.QMainWindow):
 		self._about.show()
 
 	def import_SBML(self):
+		if not use_sbml:
+			print "libsbml not found, aborting"
+			return
 		file = str(QtGui.QFileDialog.getOpenFileName(self, "Select Directory"))
 		if file!="":
 			SL = SBMLloader(file)  
