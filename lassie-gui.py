@@ -36,7 +36,7 @@ class MyWindow(QtGui.QMainWindow):
 		self._about = MyDialog()
 		self._about.setModal(True)
 		#self.populate_model_data("C:\\Users\\aresio\\Documents\\PythonCode\\ModelliTest\\MM")
-		
+
 	def show_help(self):
 		self._about.show()
 
@@ -46,14 +46,14 @@ class MyWindow(QtGui.QMainWindow):
 			return
 		file = str(QtGui.QFileDialog.getOpenFileName(self, "Select Directory"))
 		if file!="":
-			SL = SBMLloader(file)  
+			SL = SBMLloader(file)
     		SL.convert_to_biosimware("converted_sbml")
     		self._open_model("converted_sbml")
 
 	def select_all(self):
 		for x in xrange(self.speciestable.rowCount()):
 			self.speciestable.item(x,2).setCheckState(QtCore.Qt.Checked)
-	
+
 
 	def deselect_all(self):
 		for x in xrange(self.speciestable.rowCount()):
@@ -74,17 +74,17 @@ class MyWindow(QtGui.QMainWindow):
 		self.input_valid = False
 
 		try:
-			A = loadtxt(path+"/left_side") 
+			A = loadtxt(path+"/left_side")
 		except:
 			self.show_warning("Cannot open model directory")
 			self.disable_simulation(); return
 		reactions = len(A)
-		species = len(A[0])		
+		species = len(A[0])
 
 		try:
 			with open(path+"/alphabet") as fi:
 				species_names = fi.readline().split()
-		except:				
+		except:
 			print "Cannot open", path+"/alphabet"
 			species_names = ["S_"+str(x) for x in xrange(species)]
 		print species_names
@@ -110,7 +110,7 @@ class MyWindow(QtGui.QMainWindow):
 		if self.is_everything_ready(): self.enable_simulation()
 
 	def is_everything_ready(self):
-		return self.input_valid and self.output_valid 
+		return self.input_valid and self.output_valid
 
 
 	def enable_simulation(self): self.simulatebutton.setEnabled(True)
@@ -121,15 +121,15 @@ class MyWindow(QtGui.QMainWindow):
 		self.speciestable.setColumnCount(3)
 		for i in xrange(len(names)):
 			n = names[i]
-			a = amounts[i] 
+			a = amounts[i]
 			w_n = QtGui.QTableWidgetItem(n)
 			w_a = QtGui.QTableWidgetItem(str(a))
 
 			w_c = QtGui.QTableWidgetItem()
 			w_c.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-			w_c.setCheckState(QtCore.Qt.Checked)       
+			w_c.setCheckState(QtCore.Qt.Checked)
 			w_c.setTextAlignment(QtCore.Qt.AlignCenter)
-			
+
 			self.speciestable.setItem(i, 0, w_n)
 			self.speciestable.setItem(i, 1, w_a)
 			self.speciestable.setItem(i, 2, w_c)
@@ -142,7 +142,7 @@ class MyWindow(QtGui.QMainWindow):
 		for i, reactants in enumerate(left):
 			react_list = []
 			for j in xrange(len(reactants)):
-				if reactants[j]>0: 
+				if reactants[j]>0:
 					if reactants[j]==1:
 						react_list.append(names[j])
 					else:
@@ -151,7 +151,7 @@ class MyWindow(QtGui.QMainWindow):
 		for i, products in enumerate(right):
 			prod_list = []
 			for j in xrange(len(products)):
-				if products[j]>0: 
+				if products[j]>0:
 					if products[j]==1:
 						prod_list.append(names[j])
 					else:
@@ -160,7 +160,7 @@ class MyWindow(QtGui.QMainWindow):
 		for k in xrange(len(left_side_reactions)):
 		#for a,b in zip(left_side_reactions, right_side_reactions):
 			a,b=left_side_reactions[k], right_side_reactions[k]
-			reazione = a+"->"+b		
+			reazione = a+"->"+b
 			w_r = QtGui.QTableWidgetItem(reazione)
 			w_k = QtGui.QTableWidgetItem(str(K[k]))
 			self.reactionstable.setItem(k, 0, w_r)
@@ -191,7 +191,7 @@ class MyWindow(QtGui.QMainWindow):
 				last_dir = fi.readline()
 		except:
 			pass
-		direct = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory", last_dir))		
+		direct = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory", last_dir))
 		if direct != "":
 			if self.is_valid_input_directory(direct):
 				self.outputpathlabel.setText(direct)
@@ -206,6 +206,12 @@ class MyWindow(QtGui.QMainWindow):
 
 	def simulate(self):
 		# step 0: create files
+
+		try:
+			close('all')
+		except:
+			print "Not figure open"
+
 		t_vector = linspace(0, float(self.timemax.value()), int(self.samples.value()))
 		in_dir  = str(self.inputpathlabel.text())
 		out_dir = str(self.outputpathlabel.text())
@@ -219,11 +225,20 @@ class MyWindow(QtGui.QMainWindow):
 
 		with open(in_dir+"/modelkind", "w") as fo:
 			fo.write("deterministic")
-		
+
 		# step 1: launch simulation (platform dependent)
 		if "Windows" in platform():
 			print " * Windows detected, using specific binary"
-			binary = "lassieWin.exe"			
+			binary = "lassieWin.exe"
+		elif "Linux" in platform():
+			print " * Linux detected, using specific binary"
+			binary = "./lassie"
+		else:
+			print " * OSX detected, using specific binary"
+			binary = "./lassie"
+
+
+
 
 		command = [binary, "-double", in_dir, out_dir]
 		print " ".join(command)
@@ -231,7 +246,8 @@ class MyWindow(QtGui.QMainWindow):
 
 		# step 2: plot results
 		results = loadtxt(out_dir+"/output/Solution")
-		self.figure.clf()
+		#self.figure.clf()
+		self.figure = figure()
 		ax = self.figure.add_subplot(1,1,1)
 		y = 0
 		for x in xrange(self.speciestable.rowCount()):
@@ -242,10 +258,10 @@ class MyWindow(QtGui.QMainWindow):
 		ax.set_ylabel("Amount")
 		self.figure.tight_layout()
 		ax.legend()
-		self.figure.show()
+		self.figure.show("block=True")
 
 if __name__ == '__main__':
-	
+
 
 	app    = QtGui.QApplication(sys.argv)
 	window = MyWindow()

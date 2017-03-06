@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
 		cout << "***************************************************************\n\n";
 		toExit = true;
 	}
-	
+
 	if(toExit)
 	{
 		exit(-1);
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
 	}
 
 	string temp;
-	int plot = 0;
+	//int plot = 0;
 	int verbose = 0;
 
 	//check optional parameters
@@ -305,13 +305,13 @@ int main(int argc, char* argv[])
 		{
 			verbose = 1;
 		}
-		else
-		{
-			if(strcmp(temp.c_str(), "-p") == 0)
-			{
-				plot = 1;
-			}
-		}
+		// else
+		// {
+		// 	if(strcmp(temp.c_str(), "-p") == 0)
+		// 	{
+		// 		plot = 1;
+		// 	}
+		// }
 	}
 
 	cout << "\n***************************************************************\n";
@@ -322,10 +322,10 @@ int main(int argc, char* argv[])
 		cout << "PARAMETERS:";
 
 		cout << "\nverbose = true" << "\n";
-		if(plot)
-			cout << "plot = true" << "\n";
-		else
-			cout << "plot = false" << "\n";
+		// if(plot)
+		// 	cout << "plot = true" << "\n";
+		// else
+		// 	cout << "plot = false" << "\n";
 	}
 
 	stringstream stream;
@@ -341,70 +341,70 @@ int main(int argc, char* argv[])
 		timeSim = sim -> run(A, B, c_vector, cs_vector, t_vector, MX_0, M_feed, modelkind, folder,
 				verbose, atol_vector, be_step, newton_iter, newton_tol, rkf_step, stiffness_tol, volume);
 
-		if(plot)
-		{
-
-			folder1 = folder + slash +"image";
-			dir = opendir(folder1.c_str());
-			if(dir != NULL)
-			{
-
-				if (os == 0)
-				{
-					folder1 = "del /f /q " + folder + slash + "image";
-					sis = system(folder1.c_str());
-
-					folder1 = "RD /S /Q " + folder + slash + "image";
-					sis = system(folder1.c_str());
-					folder1 = "MD " + folder + slash + "image";
-					sis = system(folder1.c_str());
-				}
-				else
-				{
-					folder1 = "rm -rf " + folder + slash + "image";
-					sis = system(folder1.c_str());
-					folder1 = "mkdir " + folder + slash + "image";
-					sis = system(folder1.c_str());
-				}
-				
-			}
-			else
-			{
-				if (os == 0)
-				{
-					folder1 = "MD " + folder + slash + "image";
-					sis = system(folder1.c_str());
-				}
-				else
-				{
-					folder1 = "mkdir " + folder + slash + "image";
-					sis = system(folder1.c_str());
-				}
-			}
-			s =  "python src" + slash + "python" + slash + "Plotting.py " + cs_vector + " " + folder + " " + alphabet + " " + stream.str();
-			sis = system(s.c_str());
-		}
-		else
-		{
-			folder1 = folder + slash +"image";
-			dir = opendir(folder1.c_str());
-			if(dir != NULL)
-			{
-				if (os == 0)
-				{
-					folder1 = "del /f /q " + folder + slash + "image";
-					sis = system(folder1.c_str());
-
-					folder1 = "RD /S /Q " + folder + slash + "image";
-					sis = system(folder1.c_str());
-				}
-				else
-				{
-					folder1 = "rm -rf " + folder + slash + "image";
-					sis = system(folder1.c_str());
-				}
-			}
-		}
+		// if(plot)
+		// {
+    //
+		// 	folder1 = folder + slash +"image";
+		// 	dir = opendir(folder1.c_str());
+		// 	if(dir != NULL)
+		// 	{
+    //
+		// 		if (os == 0)
+		// 		{
+		// 			folder1 = "del /f /q " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+    //
+		// 			folder1 = "RD /S /Q " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 			folder1 = "MD " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 		}
+		// 		else
+		// 		{
+		// 			folder1 = "rm -rf " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 			folder1 = "mkdir " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 		}
+    //
+		// 	}
+		// 	else
+		// 	{
+		// 		if (os == 0)
+		// 		{
+		// 			folder1 = "MD " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 		}
+		// 		else
+		// 		{
+		// 			folder1 = "mkdir " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 		}
+		// 	}
+		// 	s =  "python src" + slash + "python" + slash + "Plotting.py " + cs_vector + " " + folder + " " + alphabet + " " + stream.str();
+		// 	sis = system(s.c_str());
+		// }
+		// else
+		// {
+		// 	folder1 = folder + slash +"image";
+		// 	dir = opendir(folder1.c_str());
+		// 	if(dir != NULL)
+		// 	{
+		// 		if (os == 0)
+		// 		{
+		// 			folder1 = "del /f /q " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+    //
+		// 			folder1 = "RD /S /Q " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 		}
+		// 		else
+		// 		{
+		// 			folder1 = "rm -rf " + folder + slash + "image";
+		// 			sis = system(folder1.c_str());
+		// 		}
+		// 	}
+		// }
 	}
 	//run simulation using double floating point precision
 	else
@@ -415,71 +415,71 @@ int main(int argc, char* argv[])
 			timeSim = sim -> run(A, B, c_vector, cs_vector, t_vector, MX_0, M_feed, modelkind, folder,
 				verbose, atol_vector, be_step, newton_iter, newton_tol, rkf_step, stiffness_tol, volume);
 
-			if(plot)
-			{
-
-				folder1 = folder + slash +"image";
-				dir = opendir(folder1.c_str());
-				if(dir != NULL)
-				{
-
-					if (os == 0)
-					{
-						folder1 = "del /f /q " + folder + slash + "image";
-						sis = system(folder1.c_str());
-
-						folder1 = "RD /S /Q " + folder + slash + "image";
-						sis = system(folder1.c_str());
-						
-						folder1 = "MD " + folder + slash + "image";
-						sis = system(folder1.c_str());
-					}
-					else
-					{
-						folder1 = "rm -rf " + folder + slash + "image";
-						sis = system(folder1.c_str());
-						folder1 = "mkdir " + folder + slash + "image";
-						sis = system(folder1.c_str());
-					}
-					
-				}
-				else
-				{
-					if (os == 0)
-					{
-						folder1 = "MD " + folder + slash + "image";
-						sis = system(folder1.c_str());
-					}
-					else
-					{
-						folder1 = "mkdir " + folder + slash + "image";
-						sis = system(folder1.c_str());
-					}
-				}
-				s =  "python src" + slash + "python" + slash + "Plotting.py " + cs_vector + " " + folder + " " + alphabet + " " + stream.str();
-				sis = system(s.c_str());
-			}
-			else
-			{
-				folder1 = folder + slash +"image";
-				dir = opendir(folder1.c_str());
-				if(dir != NULL)
-				{
-					if (os == 0)
-					{
-						folder1 = "del /f /q " + folder + slash + "image";
-						sis = system(folder1.c_str());
-
-						folder1 = "RD /S /Q " + folder + slash + "image";
-						sis = system(folder1.c_str());
-					}
-					else
-					{
-						folder1 = "rm -rf " + folder + slash + "image";
-						sis = system(folder1.c_str());
-					}
-				}
-			}
+			// if(plot)
+			// {
+      //
+			// 	folder1 = folder + slash +"image";
+			// 	dir = opendir(folder1.c_str());
+			// 	if(dir != NULL)
+			// 	{
+      //
+			// 		if (os == 0)
+			// 		{
+			// 			folder1 = "del /f /q " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+      //
+			// 			folder1 = "RD /S /Q " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+      //
+			// 			folder1 = "MD " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+			// 		}
+			// 		else
+			// 		{
+			// 			folder1 = "rm -rf " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+			// 			folder1 = "mkdir " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+			// 		}
+      //
+			// 	}
+			// 	else
+			// 	{
+			// 		if (os == 0)
+			// 		{
+			// 			folder1 = "MD " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+			// 		}
+			// 		else
+			// 		{
+			// 			folder1 = "mkdir " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+			// 		}
+			// 	}
+			// 	s =  "python src" + slash + "python" + slash + "Plotting.py " + cs_vector + " " + folder + " " + alphabet + " " + stream.str();
+			// 	sis = system(s.c_str());
+			// }
+			// else
+			// {
+			// 	folder1 = folder + slash +"image";
+			// 	dir = opendir(folder1.c_str());
+			// 	if(dir != NULL)
+			// 	{
+			// 		if (os == 0)
+			// 		{
+			// 			folder1 = "del /f /q " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+      //
+			// 			folder1 = "RD /S /Q " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+			// 		}
+			// 		else
+			// 		{
+			// 			folder1 = "rm -rf " + folder + slash + "image";
+			// 			sis = system(folder1.c_str());
+			// 		}
+			// 	}
+			// }
 		}
 	}
 	cudaEventRecord( stop, 0 );
@@ -504,7 +504,7 @@ __host__ vector<string> openDirectory(string path)
 	vector<string> files;
 	DIR*    dir;
 	struct dirent *pdir;
-	
+
 	dir = opendir(path.c_str());
 	if(dir == NULL)
 	{
@@ -513,7 +513,7 @@ __host__ vector<string> openDirectory(string path)
 		cout << "***************************************************************\n\n";
 		exit(-1);
 	}
-	
+
 	while ((pdir = readdir(dir)) != NULL )
 	{
 		str = pdir->d_name;
