@@ -198,6 +198,12 @@ class MyWindow(QtGui.QMainWindow):
 
 	def simulate(self):
 		# step 0: create files
+
+		try:
+			close('all')
+		except:
+			print "Not figure open"
+
 		t_vector = linspace(0, float(self.timemax.value()), int(self.samples.value()))
 		in_dir  = str(self.inputpathlabel.text())
 		out_dir = str(self.outputpathlabel.text())
@@ -232,7 +238,8 @@ class MyWindow(QtGui.QMainWindow):
 
 		# step 2: plot results
 		results = loadtxt(out_dir+"/output/Solution")
-		self.figure.clf()
+		#self.figure.clf()
+		self.figure = figure()
 		ax = self.figure.add_subplot(1,1,1)
 		y = 0
 		for x in xrange(self.speciestable.rowCount()):
@@ -243,7 +250,7 @@ class MyWindow(QtGui.QMainWindow):
 		ax.set_ylabel("Amount")
 		self.figure.tight_layout()
 		ax.legend()
-		self.figure.show()
+		self.figure.show("block=True")
 
 if __name__ == '__main__':
 
