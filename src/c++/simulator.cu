@@ -52,16 +52,10 @@ int main(int argc, char* argv[])
 	string B;
 	//vector reaction rate
 	string c_vector;
-	//vector sampling species
-	string cs_vector;
 	//vector sampling times
 	string t_vector;
 	//vector initial conditions
 	string MX_0;
-	//Vector of the feed chemical species
-	string M_feed;
-	//Type of input model
-	string modelkind;
 
 	//optinal files
 	string atol_vector = "NA";
@@ -72,6 +66,9 @@ int main(int argc, char* argv[])
 	string rkf_step = "NA";
 	string stiffness_tol = "NA";
 	string volume = "NA";
+	string modelkind = "NA";
+	string cs_vector = "NA";
+	string M_feed = "NA";
 
 	// check mandatory parameters
 	if(argc == 1)
@@ -111,7 +108,7 @@ int main(int argc, char* argv[])
 	string path = argv[2];
 
 	vector<string> files = openDirectory(path);
-	int count[8] = {0};
+	int count[5] = {0};
 	for(int ff = 0; ff < files.size(); ff++)
 	{
 		if(strcmp(files[ff].c_str(), "left_side") == 0)
@@ -129,30 +126,27 @@ int main(int argc, char* argv[])
 			c_vector = path + slash + files[ff];
 			count[2] = 1;
 		}
-		else if(strcmp(files[ff].c_str(), "cs_vector") == 0)
-		{
-			cs_vector = path + slash + files[ff];
-			count[3] = 1;
-		}
 		else if(strcmp(files[ff].c_str(), "t_vector") == 0)
 		{
 			t_vector = path + slash + files[ff];
-			count[4] = 1;
+			count[3] = 1;
 		}
 		else if(strcmp(files[ff].c_str(), "MX_0") == 0 || strcmp(files[ff].c_str(), "M_0") == 0)
 		{
 			MX_0 = path + slash + files[ff];
-			count[5] = 1;
+			count[4] = 1;
+		}
+		else if(strcmp(files[ff].c_str(), "cs_vector") == 0)
+		{
+			cs_vector = path + slash + files[ff];
 		}
 		else if(strcmp(files[ff].c_str(), "M_feed") == 0)
 		{
 			M_feed = path + slash + files[ff];
-			count[6] = 1;
 		}
 		else if(strcmp(files[ff].c_str(), "modelkind") == 0)
 		{
 			modelkind =  path + slash + files[ff];
-			count[7] = 1;
 		}
 		else if(strcmp(files[ff].c_str(), "atol_vector") == 0)
 		{
@@ -214,35 +208,14 @@ int main(int argc, char* argv[])
 	if(count[3] == 0)
 	{
 		cout << "\n\n***************************************************************\n\n";
-		cout << "\nError: there is not vector of sampling species" << "\n";
+		cout << "\nError: there is not vector of time instants" << "\n";
 		cout << "***************************************************************\n\n";
 		toExit = true;
 	}
 	if(count[4] == 0)
 	{
 		cout << "\n\n***************************************************************\n\n";
-		cout << "\nError: there is not vector of time instants" << "\n";
-		cout << "***************************************************************\n\n";
-		toExit = true;
-	}
-	if(count[5] == 0)
-	{
-		cout << "\n\n***************************************************************\n\n";
 		cout << "\nError: there is not vector of initial conditions" << "\n";
-		cout << "***************************************************************\n\n";
-		toExit = true;
-	}
-	if(count[6] == 0)
-	{
-		cout << "\n\n***************************************************************\n\n";
-		cout << "\nError: there is not vector of feed species" << "\n";
-		cout << "***************************************************************\n\n";
-		toExit = true;
-	}
-	if(count[7] == 0)
-	{
-		cout << "\n\n***************************************************************\n\n";
-		cout << "\nError: there is not modelkind file" << "\n";
 		cout << "***************************************************************\n\n";
 		toExit = true;
 	}

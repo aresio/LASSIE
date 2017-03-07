@@ -97,18 +97,22 @@ public:
 		Reader<T>* reader = new Reader<T>;
 		vector<vector<short> > left_matrix = reader -> readMatrix(A);
 		vector<vector<short> > right_matrix = reader -> readMatrix(B);
-		vector<int> cs_vector = reader -> readByLineshort(cs_vector1);
-
+		
 		vector<T> c_vector = reader -> readByLine(c_vector1);
 		vector<T> t_vector = reader -> readByLine(t_vector1);
 
 		vector<T> M_0 = reader -> readByTab(MX_0);
-		vector<T> M_feed = reader -> readByTab(M_feed1);
 
-		int modelkind = reader -> readType(modelkind1);
+		//vector<int> cs_vector = reader -> readByLineshort(cs_vector1);
+		//vector<T> M_feed = reader -> readByTab(M_feed1);
+		//int modelkind = reader -> readType(modelkind1);
 
 		T dt_ei, dt_rkf, tollN, isStiff;
 		vector<T> atol_vector;
+		vector<T> M_feed;
+		vector<int> cs_vector;
+		int modelkind;
+
 		int iterN;
 
 		//reading optional files
@@ -165,6 +169,35 @@ public:
 		{
 			for(int i = 0; i < M_0.size(); i++)
 				atol_vector.push_back(1e-12);
+		}
+
+		if(strcmp(cs_vector1.c_str(), "NA") != 0)
+		{
+			cs_vector = reader -> readByLineshort(cs_vector1);
+		}
+		else
+		{
+			for(int i = 0; i < M_0.size(); i++)
+				cs_vector.push_back(i);
+		}
+
+		if(strcmp(M_feed1.c_str(), "NA") != 0)
+		{
+			M_feed = reader -> readByTab(M_feed1);
+		}
+		else
+		{
+			for(int i = 0; i < M_0.size(); i++)
+				M_feed.push_back(0.0);
+		}
+
+		if(strcmp(modelkind1.c_str(), "NA") != 0)
+		{
+			modelkind = reader -> readType(modelkind1);
+		}
+		else
+		{
+			modelkind = 0;
 		}
 
 		int bdf = 1;
