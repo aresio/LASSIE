@@ -14,11 +14,66 @@ except:
 
 import resources_rc
 
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+matplotlib.rcParams.update({'font.size': 8})
+
 class MyDialog(QtGui.QDialog):
 	def __init__(self):
 		super(MyDialog, self).__init__()
 		uic.loadUi('about-lassie.ui', self)
 
+
+class GraphCanvas(FigureCanvas):
+
+    def __init__(self, parent=None, dpi=100):
+
+        self.fig = Figure(dpi=dpi)                                
+        FigureCanvas.__init__(self, self.fig)
+        FigureCanvas.setSizePolicy(self,
+                                   QtGui.QSizePolicy.Expanding,
+                                   QtGui.QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+
+
+
+    def drawGraph(self, title="", data={}, speciestable=None, results=[]):
+		#print results
+		if len(results)==0: return
+		self.axes = self.fig.add_subplot(111)        
+		self.axes.cla()         					
+		#self.fig.set_title(title)
+		y = 0
+		for x in xrange(speciestable.rowCount()):
+			if speciestable.item(x,2).checkState() == QtCore.Qt.Checked:
+				self.axes.plot(results.T[0], results.T[y+1], "o-", markersize=3, label=str(speciestable.item(x,0).text()))
+				y += 1
+		self.axes.set_xlabel("Time")
+		self.axes.set_ylabel("Amount")		
+		self.axes.legend()
+		self.fig.tight_layout()
+		self.draw()
+		self.background = self.fig.canvas.copy_from_bbox(self.axes.bbox)
+
+    def onMove(self, event):
+        
+
+        # cursor moves on the canvas
+        if event.inaxes:
+
+            # restore the clean background
+            self.fig.canvas.restore_region(self.background)
+            ymin, ymax = self.axes.get_ylim()
+            x = event.xdata - 1
+
+            # draw each vertical line
+            for line in self.verticalLines:
+                line.set_xdata((x,))
+                line.set_ydata((ymin, ymax))
+                self.axes.draw_artist(line)
+                x += 1
+
+            self.fig.canvas.blit(self.axes.bbox)
 
 
 
@@ -35,6 +90,10 @@ class MyWindow(QtGui.QMainWindow):
 		self.figure = figure()
 		self._about = MyDialog()
 		self._about.setModal(True)
+		self._results = []
+
+		self._plot_canvas = GraphCanvas()
+		self.plotlayout.layout().addWidget(self._plot_canvas)
 		#self.populate_model_data("C:\\Users\\aresio\\Documents\\PythonCode\\ModelliTest\\MM")
 
 	def show_help(self):
@@ -87,7 +146,7 @@ class MyWindow(QtGui.QMainWindow):
 		except:
 			print "Cannot open", path+"/alphabet"
 			species_names = ["S_"+str(x) for x in xrange(species)]
-		print species_names
+		#print species_names
 
 		try:
 			species_amounts = loadtxt(path+"/M_0")
@@ -133,6 +192,14 @@ class MyWindow(QtGui.QMainWindow):
 			self.speciestable.setItem(i, 0, w_n)
 			self.speciestable.setItem(i, 1, w_a)
 			self.speciestable.setItem(i, 2, w_c)
+			
+		self.speciestable.resizeColumnsToContents()
+		self.speciestable.itemClicked.connect(self.handle_render)
+		
+	def handle_render(self, item):
+		row, column = item.row(), item.column()
+		if column==2:	# column of species to show
+			self._plot_canvas.drawGraph(title="Bla", speciestable=self.speciestable, results=self._results)
 
 	def populate_reactions(self, names, left, right, K):
 		self.reactionstable.setRowCount(len(K))
@@ -165,6 +232,7 @@ class MyWindow(QtGui.QMainWindow):
 			w_k = QtGui.QTableWidgetItem(str(K[k]))
 			self.reactionstable.setItem(k, 0, w_r)
 			self.reactionstable.setItem(k, 1, w_k)
+		self.reactionstable.resizeColumnsToContents()
 
 	def open_model(self):
 		last_dir = "."
@@ -177,12 +245,17 @@ class MyWindow(QtGui.QMainWindow):
 		if direct != "":
 			self._open_model(direct)
 
-	def _open_model(self, direct):
-		#if self.is_valid_input_directory(direct):
+	def _open_model(self, direct):		
 		self.inputpathlabel.setText(direct)
 		self.populate_model_data(direct)
-		with open(".last_dir", "w") as fo:
-			fo.write(direct)
+		if self.input_valid:
+			print " * Model loaded"
+			with open(".last_dir", "w") as fo:
+				fo.write(direct)
+			self.inputpathlabel.setStyleSheet('border: 3px solid lime')
+		else:
+			print " * Model not loaded"
+			self.inputpathlabel.setStyleSheet('border: 3px solid red')
 
 	def choose_output_dir(self):
 		last_dir = "."
@@ -199,8 +272,10 @@ class MyWindow(QtGui.QMainWindow):
 				with open(".last_outdir", "w") as fo:
 					fo.write(direct)
 				self.output_valid = True
+				self.outputpathlabel.setStyleSheet('border: 3px solid lime')
 		else:
 			self.output_valid = False
+			self.outputpathlabel.setStyleSheet('border: 3px solid red')
 
 		if self.is_everything_ready(): self.enable_simulation()
 
@@ -237,28 +312,13 @@ class MyWindow(QtGui.QMainWindow):
 			print " * OSX detected, using specific binary"
 			binary = "./lassie"
 
-
-
-
 		command = [binary, "-double", in_dir, out_dir]
 		print " ".join(command)
 		ret = call(command)
 
 		# step 2: plot results
-		results = loadtxt(out_dir+"/output/Solution")
-		#self.figure.clf()
-		self.figure = figure()
-		ax = self.figure.add_subplot(1,1,1)
-		y = 0
-		for x in xrange(self.speciestable.rowCount()):
-			if self.speciestable.item(x,2).checkState() == QtCore.Qt.Checked:
-				ax.plot(results.T[0], results.T[y+1], label=str(self.speciestable.item(x,0).text()))
-				y += 1
-		ax.set_xlabel("Time")
-		ax.set_ylabel("Amount")
-		self.figure.tight_layout()
-		ax.legend()
-		self.figure.show("block=True")
+		self._results = loadtxt(out_dir+"/output/Solution")
+		self._plot_canvas.drawGraph(title="Bla", speciestable=self.speciestable, results=self._results)
 
 if __name__ == '__main__':
 

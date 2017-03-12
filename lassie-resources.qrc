@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="logo">
+    <file>store-directory.png</file>
+    <file>open-directory.png</file>
+    <file>lassie-icon.png</file>
+    <file>Logo Lassie.png</file>
+  </qresource>
+</RCC>

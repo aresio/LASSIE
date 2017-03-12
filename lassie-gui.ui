@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>755</width>
-    <height>362</height>
+    <width>838</width>
+    <height>364</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,11 +24,29 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="openmodelbutton">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Open &amp;model directory...</string>
+         <string>Open &amp;model</string>
+        </property>
+        <property name="icon">
+         <iconset resource="lassie-resources.qrc">
+          <normaloff>:/logo/open-directory.png</normaloff>:/logo/open-directory.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -38,6 +56,9 @@
          <font>
           <italic>true</italic>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:gray</string>
         </property>
         <property name="text">
          <string>Please select an input directory</string>
@@ -60,11 +81,120 @@
      </layout>
     </item>
     <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Model's summary</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QTableWidget" name="speciestable">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>40</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Species name</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Initial amount</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Plot</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <widget class="QPushButton" name="selallbutton">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Select all species</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="deselallbutton">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Deselect all species</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QTableWidget" name="reactionstable">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <column>
+            <property name="text">
+             <string>Reaction</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Kinetic parameter</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QPushButton" name="outputdirectorybutton">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
-         <string>&amp;Choose output directory...</string>
+         <string>&amp;Choose output directory</string>
+        </property>
+        <property name="icon">
+         <iconset resource="lassie-resources.qrc">
+          <normaloff>:/logo/store-directory.png</normaloff>:/logo/store-directory.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -74,6 +204,9 @@
          <font>
           <italic>true</italic>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:gray</string>
         </property>
         <property name="text">
          <string>Please select an output directory</string>
@@ -181,85 +314,21 @@
      </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>Model's summary</string>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
-       <item>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="0">
-          <widget class="QPushButton" name="selallbutton">
-           <property name="text">
-            <string>Select all species</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QTableWidget" name="speciestable">
-             <column>
-              <property name="text">
-               <string>Species name</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Initial amount</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Plot</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="2" column="0">
-          <widget class="QPushButton" name="deselallbutton">
-           <property name="text">
-            <string>Deselect all species</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QTableWidget" name="reactionstable">
-           <column>
-            <property name="text">
-             <string>Reaction</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Kinetic parameter</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCommandLinkButton" name="simulatebutton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Simulate model with LASSIE</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QCommandLinkButton" name="simulatebutton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Simulate model</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -268,7 +337,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>755</width>
+     <width>838</width>
      <height>21</height>
     </rect>
    </property>
@@ -299,6 +368,27 @@
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="outputwidget">
+   <property name="minimumSize">
+    <size>
+     <width>300</width>
+     <height>42</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>Output dynamics</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="plotlayout"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_Specify_LASSIE_s_executable_file">
    <property name="enabled">
     <bool>false</bool>
@@ -333,7 +423,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Import SBML (experimental)...</string>
+    <string>&amp;Import SBML...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
