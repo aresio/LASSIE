@@ -212,8 +212,6 @@ class MyWindow(QtGui.QMainWindow):
 		if self.is_everything_ready(): self.enable_simulation()
 
 	def is_everything_ready(self):
-		if self.input_valid and self.output_valid:
-			self.statusBar().showMessage( "Species: "+str(self.speciestable.rowCount())+", Reactions: "+str(self.reactionstable.rowCount()) )
 		return self.input_valid and self.output_valid
 
 
@@ -296,9 +294,10 @@ class MyWindow(QtGui.QMainWindow):
 		if self.input_valid:
 			print " * Model loaded"
 			with open(".last_dir", "w") as fo:
-				fo.write(direct)
-			#self.inputpathlabel.setStyleSheet('border: 3px solid lime')
-			self.input_greenlight.setEnabled(True)
+				fo.write(direct)			
+			self.input_greenlight.setEnabled(True)			
+			self.statusBar().showMessage( "Species: "+str(self.speciestable.rowCount())+", Reactions: "+str(self.reactionstable.rowCount()) )
+
 		else:
 			print " * Model not loaded"
 			#self.inputpathlabel.setStyleSheet('border: 3px solid red')
