@@ -18,10 +18,28 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 matplotlib.rcParams.update({'font.size': 8})
 
+
 class MyDialog(QtGui.QDialog):
 	def __init__(self):
 		super(MyDialog, self).__init__()
 		uic.loadUi('about-lassie.ui', self)
+
+
+class OptionsDialog(QtGui.QDialog):
+	def __init__(self, mainref=None):
+		super(OptionsDialog, self).__init__()
+		uic.loadUi('options.ui', self)
+		self._mainref=mainref
+
+	def select_file(self):
+		file = str(QtGui.QFileDialog.getOpenFileName(self, "Select Directory"))
+		if file!="":
+			self.binary_path.setText(file)
+
+	def accept(self):
+		self._mainref._binary = self.binary_path.text()
+		print "Settando:", self._mainref._binary
+		self.close()
 
 
 class GraphCanvas(FigureCanvas):
@@ -38,16 +56,13 @@ class GraphCanvas(FigureCanvas):
 
 
     def drawGraph(self, title="", data={}, speciestable=None, results=[]):
-		#print results
 		if len(results)==0: return
 		self.axes = self.fig.add_subplot(111)        
 		self.axes.cla()         					
-		#self.fig.set_title(title)
-		y = 0
 		for x in xrange(speciestable.rowCount()):
 			if speciestable.item(x,2).checkState() == QtCore.Qt.Checked:
-				self.axes.plot(results.T[0], results.T[y+1], "o-", markersize=3, label=str(speciestable.item(x,0).text()))
-				y += 1
+				self.axes.plot(results.T[0], results.T[x+1], "o-", markersize=3, label=str(speciestable.item(x,0).text()))
+				print "Plotting", str(speciestable.item(x,0).text())
 		self.axes.set_xlabel("Time")
 		self.axes.set_ylabel("Amount")		
 		self.axes.legend()
@@ -88,16 +103,44 @@ class MyWindow(QtGui.QMainWindow):
 
 		self.show()
 		self.figure = figure()
+		self._options = OptionsDialog(mainref=self)
+		self._options.setModal(True)
 		self._about = MyDialog()
 		self._about.setModal(True)
 		self._results = []
 
 		self._plot_canvas = GraphCanvas()
 		self.plotlayout.layout().addWidget(self._plot_canvas)
+		self.statusBar().showMessage("LASSIE ready, please open a model")
 		#self.populate_model_data("C:\\Users\\aresio\\Documents\\PythonCode\\ModelliTest\\MM")
+
+
+		# step 1: launch simulation (platform dependent)
+		if "Windows" in platform():
+			print " * Windows detected, using specific binary"
+			self._binary = "lassieWin.exe"
+		elif "Linux" in platform():
+			print " * Linux detected, using specific binary"
+			self._binary = "./lassie"
+		else:
+			print " * OSX detected, using specific binary"
+			self._binary = "./lassie"
+
+		try:
+			with open(".binary") as fi:
+				self._binary = fi.readline()
+		except:
+			pass		
 
 	def show_help(self):
 		self._about.show()
+
+	def show_options(self):
+		self._options.binary_path.setText(self._binary)
+		self._options.show()
+		print "Settato:", self._binary
+		with open(".binary", "w") as fo:
+			fo.write(self._binary)			
 
 	def import_SBML(self):
 		if not use_sbml:
@@ -169,6 +212,8 @@ class MyWindow(QtGui.QMainWindow):
 		if self.is_everything_ready(): self.enable_simulation()
 
 	def is_everything_ready(self):
+		if self.input_valid and self.output_valid:
+			self.statusBar().showMessage( "Species: "+str(self.speciestable.rowCount())+", Reactions: "+str(self.reactionstable.rowCount()) )
 		return self.input_valid and self.output_valid
 
 
@@ -252,10 +297,12 @@ class MyWindow(QtGui.QMainWindow):
 			print " * Model loaded"
 			with open(".last_dir", "w") as fo:
 				fo.write(direct)
-			self.inputpathlabel.setStyleSheet('border: 3px solid lime')
+			#self.inputpathlabel.setStyleSheet('border: 3px solid lime')
+			self.input_greenlight.setEnabled(True)
 		else:
 			print " * Model not loaded"
-			self.inputpathlabel.setStyleSheet('border: 3px solid red')
+			#self.inputpathlabel.setStyleSheet('border: 3px solid red')
+			self.input_greenlight.setEnabled(False)
 
 	def choose_output_dir(self):
 		last_dir = "."
@@ -272,10 +319,12 @@ class MyWindow(QtGui.QMainWindow):
 				with open(".last_outdir", "w") as fo:
 					fo.write(direct)
 				self.output_valid = True
-				self.outputpathlabel.setStyleSheet('border: 3px solid lime')
+				#self.outputpathlabel.setStyleSheet('border: 3px solid lime')
+				self.output_greenlight.setEnabled(True)
 		else:
 			self.output_valid = False
-			self.outputpathlabel.setStyleSheet('border: 3px solid red')
+			#self.outputpathlabel.setStyleSheet('border: 3px solid red')
+			self.output_greenlight.setEnabled(False)
 
 		if self.is_everything_ready(): self.enable_simulation()
 
@@ -301,18 +350,7 @@ class MyWindow(QtGui.QMainWindow):
 		with open(in_dir+"/modelkind", "w") as fo:
 			fo.write("deterministic")
 
-		# step 1: launch simulation (platform dependent)
-		if "Windows" in platform():
-			print " * Windows detected, using specific binary"
-			binary = "lassieWin.exe"
-		elif "Linux" in platform():
-			print " * Linux detected, using specific binary"
-			binary = "./lassie"
-		else:
-			print " * OSX detected, using specific binary"
-			binary = "./lassie"
-
-		command = [binary, "-double", in_dir, out_dir]
+		command = [self._binary, "-double", in_dir, out_dir]
 		print " ".join(command)
 		ret = call(command)
 

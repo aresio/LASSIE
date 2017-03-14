@@ -6,17 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>838</width>
-    <height>364</height>
+    <width>893</width>
+    <height>446</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>LASSIE v1.0.0 </string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normalon>:/logo/lassie-icon.png</normalon>
-   </iconset>
+   <iconset resource="lassie-resources.qrc">
+    <normaloff>:/logo/images/lassie-icon.png</normaloff>:/logo/images/lassie-icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -37,7 +36,7 @@
         </property>
         <property name="icon">
          <iconset resource="lassie-resources.qrc">
-          <normaloff>:/logo/open-directory.png</normaloff>:/logo/open-directory.png</iconset>
+          <normaloff>:/logo/images/open-directory.png</normaloff>:/logo/images/open-directory.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -46,6 +45,34 @@
          </size>
         </property>
         <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="input_greenlight">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="lassie-resources.qrc">:/logo/images/check.png</pixmap>
+        </property>
+        <property name="scaledContents">
          <bool>true</bool>
         </property>
        </widget>
@@ -92,6 +119,11 @@
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
             <widget class="QTableWidget" name="speciestable">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+              </font>
+             </property>
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
@@ -151,6 +183,11 @@
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QTableWidget" name="reactionstable">
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -185,7 +222,7 @@
         </property>
         <property name="icon">
          <iconset resource="lassie-resources.qrc">
-          <normaloff>:/logo/store-directory.png</normaloff>:/logo/store-directory.png</iconset>
+          <normaloff>:/logo/images/store-directory.png</normaloff>:/logo/images/store-directory.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -194,6 +231,34 @@
          </size>
         </property>
         <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="output_greenlight">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="lassie-resources.qrc">:/logo/images/check.png</pixmap>
+        </property>
+        <property name="scaledContents">
          <bool>true</bool>
         </property>
        </widget>
@@ -320,11 +385,30 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>14</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+          <stylestrategy>PreferAntialias</stylestrategy>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
         <property name="text">
          <string>Simulate model</string>
+        </property>
+        <property name="icon">
+         <iconset resource="lassie-resources.qrc">
+          <normaloff>:/logo/images/function.png</normaloff>:/logo/images/function.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -337,7 +421,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>838</width>
+     <width>893</width>
      <height>21</height>
     </rect>
    </property>
@@ -367,7 +451,14 @@
    <addaction name="menu_Options"/>
    <addaction name="menu_Help"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+  </widget>
   <widget class="QDockWidget" name="outputwidget">
    <property name="minimumSize">
     <size>
@@ -391,7 +482,7 @@
   </widget>
   <action name="action_Specify_LASSIE_s_executable_file">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Specify LASSIE's executable file...</string>
@@ -604,6 +695,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_Specify_LASSIE_s_executable_file</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>show_options()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open_model()</slot>
@@ -613,5 +720,6 @@
   <slot>select_all()</slot>
   <slot>deselect_all()</slot>
   <slot>show_help()</slot>
+  <slot>show_options()</slot>
  </slots>
 </ui>
