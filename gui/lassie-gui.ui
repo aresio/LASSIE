@@ -412,6 +412,26 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCommandLinkButton" name="save_to_file">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Save output dynamics</string>
+        </property>
+        <property name="icon">
+         <iconset resource="lassie-resources.qrc">
+          <normaloff>:/logo/images/download-icon.png</normaloff>:/logo/images/download-icon.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -439,6 +459,8 @@
     <addaction name="action_Open_model"/>
     <addaction name="action_Import_SBML_experimental"/>
     <addaction name="separator"/>
+    <addaction name="actionSave_dynamics"/>
+    <addaction name="separator"/>
     <addaction name="actionE_xit"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
@@ -463,7 +485,7 @@
    <property name="minimumSize">
     <size>
      <width>300</width>
-     <height>42</height>
+     <height>79</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -473,8 +495,8 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
       <layout class="QGridLayout" name="plotlayout"/>
      </item>
     </layout>
@@ -528,6 +550,11 @@
   <action name="actionAbout_this_GUI">
    <property name="text">
     <string>About this GUI</string>
+   </property>
+  </action>
+  <action name="actionSave_dynamics">
+   <property name="text">
+    <string>Save &amp;dynamics...</string>
    </property>
   </action>
  </widget>
@@ -711,6 +738,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>save_to_file</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>save_files()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>428</x>
+     <y>389</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>446</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open_model()</slot>
@@ -721,5 +764,6 @@
   <slot>deselect_all()</slot>
   <slot>show_help()</slot>
   <slot>show_options()</slot>
+  <slot>save_files()</slot>
  </slots>
 </ui>

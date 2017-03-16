@@ -53,8 +53,6 @@ class GraphCanvas(FigureCanvas):
                                    QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
 
-
-
     def drawGraph(self, title="", data={}, speciestable=None, results=[]):
 		if len(results)==0: return
 		self.axes = self.fig.add_subplot(111)        
@@ -131,6 +129,11 @@ class MyWindow(QtGui.QMainWindow):
 				self._binary = fi.readline()
 		except:
 			pass		
+
+	def save_files(self):
+		file = str(QtGui.QFileDialog.getSaveFileName(self, "Select output file"))
+		if file!="":
+			savetxt(file, self._results)
 
 	def show_help(self):
 		self._about.show()
@@ -356,6 +359,7 @@ class MyWindow(QtGui.QMainWindow):
 		# step 2: plot results
 		self._results = loadtxt(out_dir+"/output/Solution")
 		self._plot_canvas.drawGraph(title="Bla", speciestable=self.speciestable, results=self._results)
+		self.save_to_file.setEnabled(True)
 
 if __name__ == '__main__':
 

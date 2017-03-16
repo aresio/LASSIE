@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="logo">
     <file>images/check.png</file>
+    <file>images/download-icon.png</file>
     <file>images/lassie-icon.png</file>
     <file>images/function.png</file>
     <file>images/Logo Lassie.png</file>
