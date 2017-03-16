@@ -35,6 +35,13 @@ The input_folder must contain the input files describing the biochemical systems
 
 https://docs.google.com/document/d/1gPq-mYk-IP-bVmiMZewGPmTJ6nMCH8al1nNr7OaBsv4/edit?usp=sharing
 
+
+We also created a GUI to simplify the simulation of models. To launch the GUI launch the corresponding python script:
+
+`python lassie-gui.py`
+
+LASSIE's GUI has the following dependencies: PyQT4, numpy, matplotlib. Experimental SBML files import can be enabled by installing the libSBML library.
+
 ## LICENSE
 
 BSD License
