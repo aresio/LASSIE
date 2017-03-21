@@ -32,9 +32,8 @@
    <string>About LASSIE</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normalon>:/logo/lassie-icon.png</normalon>
-   </iconset>
+   <iconset resource="lassie-resources.qrc">
+    <normaloff>:/logo/images/lassie-icon.png</normaloff>:/logo/images/lassie-icon.png</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="sizeConstraint">
@@ -79,9 +78,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;LASSIE is an &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;open-source&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;, free and cross-platform software developed by A. Tangherloni, M.S. Nobile, D. Besozzi, G. Mauri and P. Cazzaniga.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Further information: &lt;/span&gt;&lt;a href=&quot;mailto:paolo.cazzaniga@unibg.it&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;paolo.cazzaniga@unibg.it&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Citation: A. Tangherloni, M.S. Nobile, D. Besozzi, G. Mauri and P. Cazzaniga: LASSIE: Simulation of large-scale models of biochemical systems on GPUs, BMC Bioinformatics, &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;(2017, submitted)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Please cite this work as: &lt;br /&gt;A. Tangherloni, M.S. Nobile, D. Besozzi, G. Mauri and P. Cazzaniga: LASSIE: Simulation of large-scale models of biochemical systems on GPUs, BMC Bioinformatics, &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;(2017, submitted)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-style:italic;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Further information: &lt;/span&gt;&lt;a href=&quot;mailto:paolo.cazzaniga@unibg.it&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;paolo.cazzaniga@unibg.it&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -91,7 +90,7 @@ p, li { white-space: pre-wrap; }
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="lassie-resources.qrc">:/logo/Logo Lassie.png</pixmap>
+          <pixmap resource="lassie-resources.qrc">:/logo/images/Logo Lassie.png</pixmap>
          </property>
         </widget>
        </item>

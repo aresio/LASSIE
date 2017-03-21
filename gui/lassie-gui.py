@@ -116,13 +116,13 @@ class MyWindow(QtGui.QMainWindow):
 		# step 1: launch simulation (platform dependent)
 		if "Windows" in platform():
 			print " * Windows detected, using specific binary"
-			self._binary = "lassieWin.exe"
+			self._binary = "../lassieWin.exe"
 		elif "Linux" in platform():
 			print " * Linux detected, using specific binary"
-			self._binary = "./lassie"
+			self._binary = "../lassie"
 		else:
 			print " * OSX detected, using specific binary"
-			self._binary = "./lassie"
+			self._binary = "../lassie"
 
 		try:
 			with open(".binary") as fi:
