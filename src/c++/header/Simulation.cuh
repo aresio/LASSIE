@@ -40,7 +40,7 @@ using namespace std;
 		if (_m_cudaStat != cudaSuccess) {										\
 			fprintf(stderr, "Error %s at line %d in file %s\n",					\
 					cudaGetErrorString(_m_cudaStat), __LINE__, __FILE__);		\
-					exit(1);															\
+					exit(-13);															\
 		} }
 
 /******************************************************************************/
@@ -78,7 +78,7 @@ public:
 			string t_vector1, string MX_0, string M_feed1, string modelkind1,
 			string folder, int verbose, string atol_vector1, string be_step,
 			string newton_iter, string newton_tol, string rkf_step, 
-			string stiffness_tol, string volume1)
+			string stiffness_tol, string volume1, string prec)
 	{
 
 		CUDA_CHECK_RETURN(cudaDeviceSetCacheConfig(cudaFuncCachePreferL1));
@@ -204,12 +204,16 @@ public:
 
 		if(verbose)
 		{
+			cout << "\n***************************************************************\n";
+			cout << "PARAMETERS:";
+			cout << "\nverbose = true" << "\n";
 			cout << "dt Runge-Kutta-Fehlberg = " << dt_rkf << "\n";
 			cout << "dt Backward Euler = " << dt_ei << "\n";
 			cout << "Newton's iterations = " << iterN << "\n";
 			cout << "Newton's tollerance = " << tollN << "\n";
 			cout << "Stiffness tollerance = " << isStiff << "\n";
 			cout << "Runge-Kutta-Fehlberg's tollerances = " << atol_vector[0] << "\n";
+			cout << "Float pointing precision = " << prec << "\n";
 
 		}
 
@@ -217,7 +221,7 @@ public:
 		{
 			cout << "\nError: the modelkind can be: deterministic/concentration or stochastic/number\n";
 			cout << "***************************************************************\n\n";
-			exit(-1);
+			exit(-7);
 		}
 
 		T volume = 1;
@@ -228,7 +232,7 @@ public:
 			{
 				cout << "\nError: the modelkind is stochastic/number, but there is not volume file\n";
 				cout << "***************************************************************\n\n";
-				exit(-1);
+				exit(-8);
 			}
 			conversionToDeterministic(M_0, M_feed, c_vector, left_matrix, volume, verbose);
 		}
@@ -275,8 +279,8 @@ public:
 		fd=fopen(folder1.c_str(), "w");
 		if( fd==NULL )
 		{
-			perror("Error open output file SpeciesSampling");
-			exit(-1);
+			perror("Error open output file cs_vector");
+			exit(-9);
 		}
 		fprintf(fd, "Saving species' dynamics: \n");
 		for(int j=0; j < Nb_speciesSaving; j++)
@@ -428,7 +432,7 @@ public:
 			cout << "Number of blocks: " << n_blocks << endl;
 			cout << "Number of threads: " << n_threads << endl;
 			cout << "Number of Jacobian blocks: " << n_blocksJac << endl;
-			cout << "Number of Jaobian threads: " << n_threadsJac << endl;
+			cout << "Number of Jacobian threads: " << n_threadsJac << endl;
 		}
 
 		/* ********************************************************************************************************************************************* */
@@ -631,7 +635,7 @@ public:
 							cudaDeviceSynchronize();
 							break;
 						default:
-							exit(-2);
+							exit(-10);
 						}
 
 						if(itN == 0)
@@ -665,7 +669,7 @@ public:
 								cudaDeviceSynchronize();
 								break;
 							default:
-								exit(-2);
+								exit(-10);
 							}
 
 							transposteJacobian<T><<<n_blocksJac, n_threadsJac>>>(Nb_species*Nb_species, Nb_species, dev_matJac, dev_matJacTran);
@@ -686,10 +690,10 @@ public:
 						aggiorna_Newton<T><<<n_blocks, n_threads>>>(Nb_species, dev_y_v, dev_y_v1, dev_xJ, M_feedDEV);
 						cudaDeviceSynchronize();
 
-						divNorm<T><<<n_blocks, n_threads>>>(Nb_species, dev_xJ, dev_y_v1, dev_y_v1, M_feedDEV);
-						cudaDeviceSynchronize();
+						// divNorm<T><<<n_blocks, n_threads>>>(Nb_species, dev_xJ, dev_y_v1, dev_y_v1, M_feedDEV);
+						// cudaDeviceSynchronize();
 
-						thrust::device_vector<T> d_x(dev_y_v1, dev_y_v1 + Nb_species);
+						thrust::device_vector<T> d_x(dev_xJ, dev_xJ + Nb_species);
 
 						square unary_op;
 						thrust::plus<T> binary_op;
@@ -751,8 +755,8 @@ public:
 		fd=fopen(folder1.c_str(), "w");
 		if( fd==NULL )
 		{
-			perror("Error open output file Solution.txt");
-			exit(-1);
+			perror("Error open output file Solution");
+			exit(-11);
 		}
 
 		if(modelkind)
@@ -812,7 +816,7 @@ public:
 			if(value >= 3)
 			{
 				cout << "There are one or more reactions with higher order than the second one" << endl;
-				exit(-1);
+				exit(-12);
 			}
 			else
 			{

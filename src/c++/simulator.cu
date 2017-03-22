@@ -73,39 +73,21 @@ int main(int argc, char* argv[])
 	// check mandatory parameters
 	if(argc == 1)
 	{
-		cout << "\n\n***************************************************************\n\n";
-		cout << "\nError: first parameter must be -double or -float" << "\n";
-		cout << "\nError: the second parameter must be the input folder" << "\n";
-		cout << "\nError: the thirt parameter must be the output folder" << "\n";
+		cout << "\nError: the first parameter must be the input folder" << "\n";
+		cout << "\nError: the second parameter must be the output folder" << "\n";
 		cout << "***************************************************************\n\n";
-		exit(-1);
+		exit(-3);
 	}
 
 	if(argc == 2)
 	{
-		cout << "\nError: the second parameter must be the input folder" << "\n";
-		cout << "\nError: the thirt parameter must be the output folder" << "\n";
+		cout << "\nEror: the second parameter must be the output folder" << "\n";
 		cout << "***************************************************************\n\n";
-		exit(-1);
-	}
-
-	if(argc == 3)
-	{
-		cout << "\nError: the thirt parameter must be the output folder" << "\n";
-		cout << "***************************************************************\n\n";
-		exit(-1);
-	}
-
-	string prec = argv[1];
-	if((strcmp(prec.c_str(), "-double") != 0) && (strcmp(prec.c_str(), "-float") != 0))
-	{
-		cout << "\nError: first parameter must be -double or -float" << "\n";
-		cout << "***************************************************************\n\n";
-		exit(-1);
+		exit(-2);
 	}
 
 	//read model files
-	string path = argv[2];
+	string path = argv[1];
 
 	vector<string> files = openDirectory(path);
 	int count[5] = {0};
@@ -222,11 +204,11 @@ int main(int argc, char* argv[])
 
 	if(toExit)
 	{
-		exit(-1);
+		exit(-4);
 	}
 
 	//creation output folder
-	string folder = argv[3];
+	string folder = argv[2];
 	string folder1 = "\"" + folder + "\"";
 
 	DIR* dir;
@@ -237,9 +219,9 @@ int main(int argc, char* argv[])
 		if(folder1[0] == '-' || folder1[0] == ' ')
 		{
 			cout << "\n\n***************************************************************\n\n";
-			cout << "\nError: the thirt parameter must be the output folder" << "\n";
+			cout << "\nError: the second parameter must be the output folder" << "\n";
 			cout << "***************************************************************\n\n";
-			exit(-1);
+			exit(-2);
 		}
 		if (os == 0)
 		{
@@ -253,8 +235,8 @@ int main(int argc, char* argv[])
 		}
 	}
 
-  folder1 = "\"" + folder + slash + "output" + "\"";
-  dir = opendir(folder1.c_str());
+  	folder1 = "\"" + folder + slash + "output" + "\"";
+  	dir = opendir(folder1.c_str());
 	if(dir == NULL)
 	{
 		if (os == 0)
@@ -270,43 +252,46 @@ int main(int argc, char* argv[])
 	}
 
 	string temp;
-	//int plot = 0;
+	string temp1 = "double";
 	int verbose = 0;
-
+	string prec = "-double";;
 	//check optional parameters
-	for(int i = 4; i < argc; i++)
+	for(int i = 3; i < argc; i++)
 	{
 		temp = argv[i];
 		if(strcmp(temp.c_str(), "-v") == 0)
 		{
 			verbose = 1;
 		}
-		// else
-		// {
-		// 	if(strcmp(temp.c_str(), "-p") == 0)
-		// 	{
-		// 		plot = 1;
-		// 	}
-		// }
+		if(strcmp(temp.c_str(), "-p") == 0)
+		{
+			if (i == argc-1)
+			{
+				cout << "\nError: you must insert the precison: double or float" << "\n";
+				cout << "***************************************************************\n\n";
+				exit(-5);
+			}
+
+			temp1 = argv[i+1];
+			if((strcmp(temp1.c_str(), "double") != 0) && (strcmp(temp1.c_str(), "float") != 0))
+			{
+				cout << "\nError: the parameter must be double or float" << "\n";
+				cout << "***************************************************************\n\n";
+				exit(-6);
+			}
+			else
+			{
+				prec = "-" + temp1;
+			}
+		}
 	}
 
 	cout << "\n***************************************************************\n";
 	cout << "\nLASSIE: A large-scale simulator of mass-action kinetics models\n";
-	if(verbose)
-	{
-		cout << "\n***************************************************************\n";
-		cout << "PARAMETERS:";
 
-		cout << "\nverbose = true" << "\n";
-		// if(plot)
-		// 	cout << "plot = true" << "\n";
-		// else
-		// 	cout << "plot = false" << "\n";
-	}
-
-	stringstream stream;
-	stream << verbose;
-	string s;
+	// stringstream stream;
+	// stream << verbose;
+	// string s;
 
 	float timeSim = 0;
 
@@ -315,72 +300,7 @@ int main(int argc, char* argv[])
 	{
 		Simulation<float>* sim = new Simulation<float>();
 		timeSim = sim -> run(A, B, c_vector, cs_vector, t_vector, MX_0, M_feed, modelkind, folder,
-				verbose, atol_vector, be_step, newton_iter, newton_tol, rkf_step, stiffness_tol, volume);
-
-		// if(plot)
-		// {
-    //
-		// 	folder1 = folder + slash +"image";
-		// 	dir = opendir(folder1.c_str());
-		// 	if(dir != NULL)
-		// 	{
-    //
-		// 		if (os == 0)
-		// 		{
-		// 			folder1 = "del /f /q " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-    //
-		// 			folder1 = "RD /S /Q " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 			folder1 = "MD " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 		}
-		// 		else
-		// 		{
-		// 			folder1 = "rm -rf " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 			folder1 = "mkdir " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 		}
-    //
-		// 	}
-		// 	else
-		// 	{
-		// 		if (os == 0)
-		// 		{
-		// 			folder1 = "MD " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 		}
-		// 		else
-		// 		{
-		// 			folder1 = "mkdir " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 		}
-		// 	}
-		// 	s =  "python src" + slash + "python" + slash + "Plotting.py " + cs_vector + " " + folder + " " + alphabet + " " + stream.str();
-		// 	sis = system(s.c_str());
-		// }
-		// else
-		// {
-		// 	folder1 = folder + slash +"image";
-		// 	dir = opendir(folder1.c_str());
-		// 	if(dir != NULL)
-		// 	{
-		// 		if (os == 0)
-		// 		{
-		// 			folder1 = "del /f /q " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-    //
-		// 			folder1 = "RD /S /Q " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 		}
-		// 		else
-		// 		{
-		// 			folder1 = "rm -rf " + folder + slash + "image";
-		// 			sis = system(folder1.c_str());
-		// 		}
-		// 	}
-		// }
+				verbose, atol_vector, be_step, newton_iter, newton_tol, rkf_step, stiffness_tol, volume, temp1);
 	}
 	//run simulation using double floating point precision
 	else
@@ -389,73 +309,7 @@ int main(int argc, char* argv[])
 		{
 			Simulation<double>* sim = new Simulation<double>();
 			timeSim = sim -> run(A, B, c_vector, cs_vector, t_vector, MX_0, M_feed, modelkind, folder,
-				verbose, atol_vector, be_step, newton_iter, newton_tol, rkf_step, stiffness_tol, volume);
-
-			// if(plot)
-			// {
-      //
-			// 	folder1 = folder + slash +"image";
-			// 	dir = opendir(folder1.c_str());
-			// 	if(dir != NULL)
-			// 	{
-      //
-			// 		if (os == 0)
-			// 		{
-			// 			folder1 = "del /f /q " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-      //
-			// 			folder1 = "RD /S /Q " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-      //
-			// 			folder1 = "MD " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-			// 		}
-			// 		else
-			// 		{
-			// 			folder1 = "rm -rf " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-			// 			folder1 = "mkdir " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-			// 		}
-      //
-			// 	}
-			// 	else
-			// 	{
-			// 		if (os == 0)
-			// 		{
-			// 			folder1 = "MD " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-			// 		}
-			// 		else
-			// 		{
-			// 			folder1 = "mkdir " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-			// 		}
-			// 	}
-			// 	s =  "python src" + slash + "python" + slash + "Plotting.py " + cs_vector + " " + folder + " " + alphabet + " " + stream.str();
-			// 	sis = system(s.c_str());
-			// }
-			// else
-			// {
-			// 	folder1 = folder + slash +"image";
-			// 	dir = opendir(folder1.c_str());
-			// 	if(dir != NULL)
-			// 	{
-			// 		if (os == 0)
-			// 		{
-			// 			folder1 = "del /f /q " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-      //
-			// 			folder1 = "RD /S /Q " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-			// 		}
-			// 		else
-			// 		{
-			// 			folder1 = "rm -rf " + folder + slash + "image";
-			// 			sis = system(folder1.c_str());
-			// 		}
-			// 	}
-			// }
+				verbose, atol_vector, be_step, newton_iter, newton_tol, rkf_step, stiffness_tol, volume, temp1);
 		}
 	}
 	cudaEventRecord( stop, 0 );
@@ -465,12 +319,12 @@ int main(int argc, char* argv[])
 	tempo /= 1000;
 	timeSim /= 1000;
 
-	printf("\nSimulation running time: %f seconds\n", timeSim);
+	//printf("\nSimulation running time: %f seconds\n", timeSim);
 	printf("Total running time: %f seconds\n", tempo);
 	cout << "\n***************************************************************\n\n";
 
 
-	return sis;
+	return 0;
 }
 
 //method to read all file in a folder
