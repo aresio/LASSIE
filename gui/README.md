@@ -1,0 +1,2 @@
+# About LASSIE's GUI
+
