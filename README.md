@@ -13,7 +13,7 @@ Tangherloni A., Nobile M.S., Besozzi D., Mauri G. and Cazzaniga P.: LASSIE: Simu
 
 ## DEPENDENCIES
 
-Just the Nvidia CUDA library (version >7.0).
+Just the Nvidia CUDA library (version 7.5 or greater).
 
 
 ##  COMPILATION
@@ -22,14 +22,14 @@ LASSIE's binary can be compiled on any supported architecture (e.g., GNU/Linux, 
 - unix.sh on GNU/Linux and Apple OS/X machines
 - windows.bat on Microsoft Windows machines
 
-The script would create a binary executable file runnable on GPUs with _at least_ a compute capability equal to 2.0. 
+The script creates a binary executable file runnable on GPUs with _at least_ a compute capability equal to 2.0. 
 
 
 ## LAUNCHING LASSIE
 
 LASSIE is designed to be launched from the command line. The arguments are: 
 
-`LASSIE -double input_folder output_folder`
+`LASSIE input_folder output_folder`
 
 The input_folder must contain the input files describing the biochemical systems under investigation. The specification of the input files can be read at the following address:
 
