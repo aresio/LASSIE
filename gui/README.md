@@ -20,7 +20,7 @@ At the present time, the GUI supports the following functionalities:
 # FUNCTIONALITIES UNDER DEVELOPMENT
 
 We plan to extend the GUI in the next future, by introducing some additional functionalities:
-* support for PySB and BioNetGen rule-based models (they will be transparently converted into reaction-based models and simulated by LASSIE);
+* support for PySB, BioNetGen and Kappa rule-based models (they will be transparently converted into reaction-based models and simulated by LASSIE);
 * complete support for _de novo_ model  editing;
 * support for species, reactions and parameters editing;
 * advanced analysis tools (e.g., sensitivity analysis, parameter estimation);
