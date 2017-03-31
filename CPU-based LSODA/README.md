@@ -5,7 +5,7 @@ This directory contains the script used for the tests, which relies on the SciPy
 
 To run a simulation use the following command:
 
-`LSODAsim.py input_dir output_dir`
+`python LSODAsim.py input_dir output_dir`
 
 where `input_dir` is the directory that contains the model to be simulated. 
 The output dynamics will be stored in the directory `output_dir`.
