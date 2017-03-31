@@ -2,6 +2,8 @@
 
 LASSIE's Graphical User Interface was specifically designed to simplify the execution of simulations. The GUI represents a user-friendly tool that does not require any GPU programming skill or expertise in modeling biological systems with ODEs.
 
+To launch the gui run the `lassie-gui.py` python script.
+
 # DEPENDENCIES
 
 The following Python libraries are mandatory to use the GUI: PyQT4; numpy; matplotlib.
