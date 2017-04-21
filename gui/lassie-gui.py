@@ -352,7 +352,7 @@ class MyWindow(QtGui.QMainWindow):
 		with open(in_dir+"/modelkind", "w") as fo:
 			fo.write("deterministic")
 
-		command = [str(self._binary), "-double", in_dir, out_dir]
+		command = [str(self._binary), in_dir, out_dir]
 		print " ".join(command)
 		ret = call(command)
 
