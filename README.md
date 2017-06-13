@@ -8,7 +8,7 @@ LASSIE automatically derives the system of ordinary differential equations from 
 
 ## HOW TO CITE LASSIE
 
-Tangherloni A., Nobile M.S., Besozzi D., Mauri G. and Cazzaniga P.: LASSIE: Simulation of large-scale models of biochemical systems on GPUs, BMC Bioinformatics, (2017, submitted)
+Tangherloni A., Nobile M.S., Besozzi D., Mauri G. and Cazzaniga P.: LASSIE: Simulation of large-scale models of biochemical systems on GPUs, BMC Bioinformatics, 18(1):246, 2017
 
 
 ## DEPENDENCIES
