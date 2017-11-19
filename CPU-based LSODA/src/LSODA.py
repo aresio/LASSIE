@@ -8,6 +8,8 @@ from scipy import linspace
 from scipy.integrate import ode
 from scipy.integrate import odeint
 import numpy as np
+import time
+
 
 
 class LSODER():
@@ -36,8 +38,11 @@ class LSODER():
 		self.time_max = tEnd
 
 
-	def run(self, subspecies):
+	def run(self):
 
+		t0 = time.time()
 		ret1 = odeint(ODE, y0, self.time_instants , Dfun=JAC, args=(self.parametri,), mxhnil=0, printmessg=False, mxstep = self.max_steps, atol=self.atolvector, rtol=self.rtol )
-			
+		t1 = time.time()
+		total = t1-t0
+		# print "Lsoda time:", total
 		return ret1

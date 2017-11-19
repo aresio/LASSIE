@@ -2,8 +2,9 @@ import sys
 import scipy.misc
 import math
 import numpy as np
-from pylab import *
-from UserString import MutableString
+from numpy import *
+#from pylab import *
+#from UserString import MutableString
 
 def fattoriale(n):
 	if n==1:
@@ -158,7 +159,7 @@ class GenerateODEs():
 				quantita_iniziali[i] = feeds[i]
 
 		try:
-			with open(self.DEFAULT_FOLDER+"/max_step") as f:
+			with open(self.DEFAULT_FOLDER+"/max_steps") as f:
 				self.max_integration_steps = int(f.readline())
 		except:
 			self.max_integration_steps=10000
