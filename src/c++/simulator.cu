@@ -7,19 +7,21 @@
 #include <cstring>
 #include <cmath>
 #include "header/Simulation.cuh"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace std;
 
 #ifdef _WIN32
     #include "dirent.h"
+	const int os = 0;
 #elif _WIN64
 	#include "dirent.h"
-#elif __linux__
-	#include <dirent.h>
+	const int os = 0;
 #else
-    #include <dirent.h>
+	#include <dirent.h>
+	const int os = 1;
 #endif
-
 
 
 __host__ vector<string> openDirectory(string path);
@@ -30,21 +32,6 @@ int main(int argc, char* argv[])
 	cudaEventCreate(&start);
 	cudaEventCreate(&stop);
 	cudaEventRecord(start, 0);
-
-	int os = 0;
-
-	#ifdef _WIN32
-	os = 0;
-	#elif _WIN64
-	os = 0;
-	#elif __linux__
-	os = 1;
-	#else
-	os = 2;
-	#endif
-
-
-	int sis;
 
 	//matrix reagents
 	string A;
@@ -113,7 +100,7 @@ int main(int argc, char* argv[])
 			t_vector = path + slash + files[ff];
 			count[3] = 1;
 		}
-		else if(strcmp(files[ff].c_str(), "MX_0") == 0 || strcmp(files[ff].c_str(), "M_0") == 0)
+		else if(strcmp(files[ff].c_str(), "M_0") == 0)
 		{
 			MX_0 = path + slash + files[ff];
 			count[4] = 1;
@@ -209,45 +196,43 @@ int main(int argc, char* argv[])
 
 	//creation output folder
 	string folder = argv[2];
-	string folder1 = "\"" + folder + "\"";
+	string folder1;
 
-	DIR* dir;
-	dir = opendir(folder1.c_str());
-
-	if(dir == NULL)
+	if(folder[0] == '-' || folder[0] == ' ')
 	{
-		if(folder1[0] == '-' || folder1[0] == ' ')
-		{
-			cout << "\n\n***************************************************************\n\n";
-			cout << "\nError: the second parameter must be the output folder" << "\n";
-			cout << "***************************************************************\n\n";
-			exit(-2);
-		}
+		cout << "\n\n***************************************************************\n\n";
+		cout << "\nError: the second parameter must be the output folder" << "\n";
+		cout << "***************************************************************\n\n";
+		exit(-2);
+	}
+
+	struct stat sb;
+	if( !(stat(folder.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)))
+	{
 		if (os == 0)
 		{
-			folder1 = "MD " + folder1;
-			sis = system(folder1.c_str());
+			folder1 = "MD " + folder;
+			int sis = system(folder1.c_str());
 		}
 		else
 		{
-			folder1 = "mkdir " + folder1;
-			sis = system(folder1.c_str());
+			folder1 = "mkdir " + folder;
+			int sis = system(folder1.c_str());
 		}
 	}
 
-  	folder1 = "\"" + folder + slash + "output" + "\"";
-  	dir = opendir(folder1.c_str());
-	if(dir == NULL)
+  	folder1 = folder + slash + "output";
+  	if( !(stat(folder1.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)))
 	{
 		if (os == 0)
 		{
 			folder1 =  "MD " + folder1;
-			sis = system(folder1.c_str());
+			int sis = system(folder1.c_str());
 		}
 		else
 		{
 			folder1 =  "mkdir " + folder1;
-			sis = system(folder1.c_str());
+			int sis = system(folder1.c_str());
 		}
 	}
 
@@ -259,9 +244,17 @@ int main(int argc, char* argv[])
 	for(int i = 3; i < argc; i++)
 	{
 		temp = argv[i];
-		if(strcmp(temp.c_str(), "-v") == 0)
+		if(strcmp(temp.c_str(), "-v1") == 0)
 		{
 			verbose = 1;
+		}
+		if(strcmp(temp.c_str(), "-v2") == 0)
+		{
+			verbose = 2;
+		}
+		if(strcmp(temp.c_str(), "-v3") == 0)
+		{
+			verbose = 3;
 		}
 		if(strcmp(temp.c_str(), "-p") == 0)
 		{
@@ -287,11 +280,8 @@ int main(int argc, char* argv[])
 	}
 
 	cout << "\n***************************************************************\n";
+	cout << "***************************************************************\n";
 	cout << "\nLASSIE: A large-scale simulator of mass-action kinetics models\n";
-
-	// stringstream stream;
-	// stream << verbose;
-	// string s;
 
 	float timeSim = 0;
 
@@ -319,9 +309,10 @@ int main(int argc, char* argv[])
 	tempo /= 1000;
 	timeSim /= 1000;
 
-	//printf("\nSimulation running time: %f seconds\n", timeSim);
+	cout << "\n***************************************************************\n";
 	printf("Total running time: %f seconds\n", tempo);
-	cout << "\n***************************************************************\n\n";
+	cout << "***************************************************************\n";
+	cout << "***************************************************************\n\n";
 
 
 	return 0;

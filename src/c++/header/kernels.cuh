@@ -3,7 +3,7 @@
 #include <iostream>   // std::cout
 
 template<class T>
-__global__ void generate_ode(short4* ode_poli, short2* offset_poli, short4* ode_moni, short2* offset_moni, T* c_vector, T* y0, T* y1, const int Nb_species)
+__global__ void generate_ode(short4* ode_poli, short2* offset_poli, short2* ode_moni, short2* offset_moni, T* c_vector, T* y0, T* y1, const int Nb_species)
 {
 	int gid = threadIdx.x + blockDim.x * blockIdx.x;
 	if(gid < Nb_species)
@@ -22,41 +22,44 @@ __global__ void generate_ode(short4* ode_poli, short2* offset_poli, short4* ode_
 			int start_moni = offset_moni[y].x;
 			int end_moni = offset_moni[y].y;
 
-			T temp = 0;
-			for(int j = start_moni; j < end_moni; j++)
+			double temp = 0;
+
+			if(end_moni > start_moni)
 			{
-				if(j == start_moni)
+				for(int j = start_moni; j < end_moni; j++)
 				{
-					if(ode_moni[j].z == 1)
+					if(j == start_moni)
 					{
-						temp = temp + signum * c_vector[k_pos] * y0[ode_moni[j].y];
+						temp += signum * c_vector[k_pos] * myPow(y0[ode_moni[j].x], ode_moni[j].y);
 					}
 					else
 					{
-						if(ode_moni[j].z == 2)
-						{
-							temp = temp + signum * c_vector[k_pos] * y0[ode_moni[j].y] * y0[ode_moni[j].y];
-						}
+						temp *= myPow(y0[ode_moni[j].x], ode_moni[j].y);
 					}
 				}
-				else
-				{
-					if(ode_moni[j].z == 1)
-					{
-						temp = temp * y0[ode_moni[j].y];
-					}
-					else
-					{
-						if(ode_moni[j].z == 2)
-						{
-							temp = temp * y0[ode_moni[j].y] * y0[ode_moni[j].y];
-						}
-					}
-				}
+				y1[gid] = y1[gid] + temp;
 			}
-			y1[gid] = y1[gid] + temp;
+
+			else
+			{
+				y1[gid] = y1[gid] + signum * c_vector[k_pos];
+			}
 		}
+		
 	}
+}
+
+template<class T>
+__device__ double myPow(T base, int ex)
+{
+	T potenza = 1.0;
+	while(ex>0)
+	{
+		potenza = potenza*base;
+		ex--;
+	}
+
+	return potenza;
 }
 
 /*********************************************************************************/
@@ -200,29 +203,28 @@ __global__ void calculate_delta(const int s, T dt,  const T* __restrict__ w1, co
 // Create Jacobian//
 
 template<class T>
-__global__ void createJac(short4* ode_poli, short2* offset_poli, short4* ode_moni, short2* offset_moni, T* c_vector, T* y0, T* y1, int Nb_species)
+__global__ void createJac(short4* ode_poli, short2* offset_poli, short2* ode_moni, short2* offset_moni, T* c_vector, T* y0, T* y1, int Nb_species)
 {
 	int gid = threadIdx.x + blockDim.x * blockIdx.x;
 	if(gid < Nb_species)
 	{
 		for(int i = 0; i < Nb_species ; i++)
 		{
-			createJacSub(ode_poli, offset_poli, ode_moni, offset_moni, c_vector, y0, y1, Nb_species, i);
-			__syncthreads();
+			createJac_(ode_poli, offset_poli, ode_moni, offset_moni, c_vector, y0, y1, Nb_species, i);
 		}
 	}
 }
 
 template<class T>
-__device__ void createJacSub(short4* ode_poli, short2* offset_poli, short4* ode_moni, short2* offset_moni, T* c_vector, T* y0, T* y1, int Nb_species, int index2)
+__device__ void createJac_(short4* ode_poli, short2* offset_poli, short2* ode_moni, short2* offset_moni, T* c_vector, T* y0, T* y1, int Nb_species, int index2)
 {
 	int gid = threadIdx.x + blockDim.x * blockIdx.x;
 	if(gid < Nb_species)
 	{
-		int ii = gid * Nb_species + index2;
+		int ii = gid + Nb_species * index2;
 		y1[ii] = 0;
-		int start = offset_poli[gid].x;
-		int end = offset_poli[gid].y;
+		int start = offset_poli[index2].x;
+		int end = offset_poli[index2].y;
 
 		for(int i = start; i < end; i++)
 		{
@@ -233,38 +235,37 @@ __device__ void createJacSub(short4* ode_poli, short2* offset_poli, short4* ode_
 			int start_moni = offset_moni[y].x;
 			int end_moni = offset_moni[y].y;
 
-			T temp = 0;
+			double temp = 0;
 			for(int j = start_moni; j < end_moni; j++)
 			{
-				if(ode_moni[j].z == 1 & ode_moni[j].y == index2)
+				if(ode_moni[j].y == 1 & ode_moni[j].x == gid)
 				{
 					temp = temp + signum * c_vector[k_pos];
 					int start_moni1 = offset_moni[y].x;
 					int end_moni1 = offset_moni[y].y;
 					for(int jj = start_moni1; jj < end_moni1; jj++)
 					{
-						if(ode_moni[jj].y != index2)
-							temp = temp*y0[ode_moni[jj].y];
+						if(ode_moni[jj].x != gid)
+							temp = temp*y0[ode_moni[jj].x];
 					}
 				}
 				else
 				{
-					if(ode_moni[j].z == 2 & ode_moni[j].y == index2)
+					if(ode_moni[j].y > 1 & ode_moni[j].x == gid)
 					{
-						temp = temp + signum * c_vector[k_pos] * 2 * y0[ode_moni[j].y];
+						temp = temp + signum * c_vector[k_pos] * ode_moni[j].y * myPow(y0[ode_moni[j].x], ode_moni[j].y-1);
 
 						int start_moni1 = offset_moni[y].x;
 						int end_moni1 = offset_moni[y].y;
 						for(int jj = start_moni1; jj < end_moni1; jj++)
 						{
-							if(ode_moni[jj].y != index2)
-								temp = temp*y0[ode_moni[jj].y];
+							if(ode_moni[jj].x != gid)
+								temp = temp*y0[ode_moni[jj].x];
 						}
 					}
 				}
 			}
-			if(temp != 0)
-				y1[ii] = y1[ii] + temp;
+			y1[ii] = y1[ii] + temp;
 		}
 	}
 }
@@ -494,7 +495,6 @@ __global__ void divNorm(const int s, T* x, T* x_old, T* x_new, T* feed)
 	}
 
 }
-
 
 /******************************************************************************/
 // Altre funzioni//

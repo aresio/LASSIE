@@ -74,6 +74,159 @@ public:
 		}
 	};
 
+	string to_string(int num)
+	{
+		string s = static_cast<ostringstream*>( &(ostringstream() << num) )->str();
+		return s;
+	}
+
+	void printOdes(short4* ode_poli, short2* offset_poli, short2* ode_moni, short2* offset_moni, T* feed, int Nb_species)
+	{
+		for(int gid = 0; gid < Nb_species; gid++)
+		{
+
+			string s;
+			int start = offset_poli[gid].x;
+			int end = offset_poli[gid].y;
+
+			if(feed[gid] != 0)
+			{
+				s = to_string(0);
+			}
+			else
+			{
+				for(int i = start; i < end; i++)
+				{
+					int y = ode_poli[i].y;
+					int signum = ode_poli[i].z;
+					int k_pos = ode_poli[i].w;
+					
+					int start_moni = offset_moni[y].x;
+					int end_moni = offset_moni[y].y;
+
+					string s1;
+
+					if(end_moni > start_moni)
+					{
+						for(int j = start_moni; j < end_moni; j++)
+						{
+							if(j == start_moni)
+							{
+
+								if(signum > 0)
+									s1 = s1 + "+" + to_string(signum) + "*" + "k[" + to_string(k_pos) + "]";
+								else
+									s1 = s1 + "" + to_string(signum) + "*" + "k[" + to_string(k_pos) + "]";
+
+								for(int l=0; l < ode_moni[j].y; l++)
+									s1 = s1 + "*" + "x[" + to_string(ode_moni[j].x) +"]";
+							}
+							else
+							{	
+								for(int l=0; l < ode_moni[j].y; l++)
+									s1 = s1 + "*" + "x[" + to_string(ode_moni[j].x) +"]";
+							}
+						}
+						s = s + s1;
+					}
+					else
+					{
+						if(signum > 0)
+							s = s + "+" + to_string(signum) + "*" + "k[" + to_string(k_pos) + "]";
+						else
+							s = s + "" + to_string(signum) + "*" + "k[" + to_string(k_pos) + "]";
+					}
+				}
+
+				if(strcmp(s.c_str(), "") == 0)
+					printf("dx[%d] = 0\n", gid);
+				else
+					printf("dx[%d] = %s\n", gid, s.c_str());
+			}
+		}
+	}
+
+	void printJac(short4* ode_poli, short2* offset_poli, short2* ode_moni, short2* offset_moni, T* feed, int Nb_species)
+	{
+
+		for(int i = 0; i < Nb_species ; i++)
+		{
+			printJac_(ode_poli, offset_poli, ode_moni, offset_moni, feed, Nb_species, i);
+		}
+	}
+
+	void printJac_(short4* ode_poli, short2* offset_poli, short2* ode_moni, short2* offset_moni, T* feed, int Nb_species, int index2)
+	{
+		for(int gid = 0; gid < Nb_species; gid++)
+		{
+
+			string s="";
+			int start = offset_poli[index2].x;
+			int end = offset_poli[index2].y;
+
+			if(feed[gid] != 0)
+			{
+				printf("dx[%d][%d] = 0\n", index2, gid);
+			}
+			else
+			{
+				for(int i = start; i < end; i++)
+				{
+					int y = ode_poli[i].y;
+					int signum = ode_poli[i].z;
+					int k_pos = ode_poli[i].w;
+
+					int start_moni = offset_moni[y].x;
+					int end_moni = offset_moni[y].y;
+
+					string s1;
+					for(int j = start_moni; j < end_moni; j++)
+					{
+						if(ode_moni[j].y == 1 & ode_moni[j].x == gid)
+						{
+							if(signum > 0)
+								s1 = s1 + "+" + to_string(signum) + "*" + "k[" + to_string(k_pos) + "]";
+							else
+								s1 = s1 + "" + to_string(signum) + "*" + "k[" + to_string(k_pos) + "]";
+
+							int start_moni1 = offset_moni[y].x;
+							int end_moni1 = offset_moni[y].y;
+							for(int jj = start_moni1; jj < end_moni1; jj++)
+							{
+								if(ode_moni[jj].x != gid)
+									s1 = s1 + "*" + "x[" + to_string(ode_moni[jj].x) +"]";
+							}
+						}
+						else
+						{
+							if(ode_moni[j].y > 1 & ode_moni[j].x == gid)
+							{
+								s1 = s1 + "" + to_string(signum*ode_moni[j].y) + "*" + "k[" + to_string(k_pos) + "]";
+
+								for(int l=0; l < ode_moni[j].y-1; l++)
+									s1 = s1 + "*" + "x[" + to_string(ode_moni[j].x) +"]";
+
+								int start_moni1 = offset_moni[y].x;
+								int end_moni1 = offset_moni[y].y;
+								
+								for(int jj = start_moni1; jj < end_moni1; jj++)
+								{
+									if(ode_moni[jj].x != gid)
+										s1 = s1 + "*" + "x[" + to_string(ode_moni[jj].x) +"]";
+								}
+							}
+						}
+					}
+					s = s + s1;
+				}
+				if(strcmp(s.c_str(), "") == 0)
+					printf("dx[%d][%d] = 0\n", index2, gid);
+				else
+					printf("dx[%d][%d] = %s\n", index2, gid, s.c_str());		
+			}
+		}
+	}
+
 	float run(string A, string B, string c_vector1, string cs_vector1,
 			string t_vector1, string MX_0, string M_feed1, string modelkind1,
 			string folder, int verbose, string atol_vector1, string be_step,
@@ -122,7 +275,7 @@ public:
 		}
 		else
 		{
-			dt_ei = 0.1;
+			dt_ei = 0.01;
 		}
 
 		if(strcmp(rkf_step.c_str(), "NA") != 0)
@@ -249,7 +402,7 @@ public:
 		int Nb_speciesSaving = cs_vector.size();
 		int rowStructPoli = count_nonzero(H);
 		int rowStructMoni = count_nonzero(left_matrix);
-		int rowOffsetMoni = count_nonzeroRows(left_matrix);
+		int rowOffsetMoni = left_matrix.size();
 		int Nb_times = t_vector.size();
 
 		int lenJac = Nb_species * Nb_species;
@@ -260,9 +413,10 @@ public:
 		create_sparse(ode_poli, H, offset_poli, 1);
 
 		//monomial
-		short4* ode_moni = (short4*) malloc(rowStructMoni * sizeof(short4));
+		short2* ode_moni = (short2*) malloc(rowStructMoni * sizeof(short2));
 		short2* offset_moni = (short2*) malloc(rowOffsetMoni * sizeof(short2));
-		create_sparse(ode_moni, left_matrix, offset_moni, 0);
+		create_sparse2(ode_moni, left_matrix, offset_moni);
+
 		/* ********************************************************************************************************************************************* */
 
 		/* ******************** creation pointers from vectors ******************** */
@@ -273,6 +427,26 @@ public:
 		T* M_feed_point = &M_feed[0];
 
 		T* t_vector_point = &t_vector[0];
+
+
+
+		if(verbose>1)
+		{
+			cout << "\n***************************************************************";
+			cout << "\nODEs:\n";
+			printOdes(ode_poli, offset_poli, ode_moni, offset_moni, M_feed_point, Nb_species);
+			cout << "***************************************************************\n";
+			cout << "\n";
+		}
+
+		if(verbose>2)
+		{
+			cout << "\n***************************************************************";
+			cout << "\nJacobian:\n";
+			printJac(ode_poli, offset_poli, ode_moni, offset_moni, M_feed_point, Nb_species);
+			cout << "***************************************************************\n";
+			cout << "\n";
+		}
 
 		FILE* fd;
 		string folder1 = folder + slash + "output" + slash + "SpeciesSampling";
@@ -295,18 +469,18 @@ public:
 
 		// structures for ODEs reconstruction
 		short4* ode_poliDEV;
-		short4* ode_moniDEV;
+		short2* ode_moniDEV;
 		short2* offset_poliDEV;
 		short2* offset_moniDEV;
 
 		//MALLOCC
 		CUDA_CHECK_RETURN(cudaMalloc((void**) &ode_poliDEV, rowStructPoli * sizeof(short4)));
-		CUDA_CHECK_RETURN(cudaMalloc((void**) &ode_moniDEV, rowStructMoni * sizeof(short4)));
+		CUDA_CHECK_RETURN(cudaMalloc((void**) &ode_moniDEV, rowStructMoni * sizeof(short2)));
 		CUDA_CHECK_RETURN(cudaMalloc((void**) &offset_poliDEV, Nb_species * sizeof(short2)));
 		CUDA_CHECK_RETURN(cudaMalloc((void**) &offset_moniDEV, rowOffsetMoni * sizeof(short2)));
 		//MEMCPY
 		CUDA_CHECK_RETURN(cudaMemcpy(ode_poliDEV, ode_poli, rowStructPoli * sizeof(short4), cudaMemcpyHostToDevice));
-		CUDA_CHECK_RETURN(cudaMemcpy(ode_moniDEV, ode_moni, rowStructMoni * sizeof(short4), cudaMemcpyHostToDevice));
+		CUDA_CHECK_RETURN(cudaMemcpy(ode_moniDEV, ode_moni, rowStructMoni * sizeof(short2), cudaMemcpyHostToDevice));
 		CUDA_CHECK_RETURN(cudaMemcpy(offset_poliDEV, offset_poli, Nb_species * sizeof(short2), cudaMemcpyHostToDevice));
 		CUDA_CHECK_RETURN(cudaMemcpy(offset_moniDEV, offset_moni, rowOffsetMoni * sizeof(short2), cudaMemcpyHostToDevice));
 
@@ -425,9 +599,9 @@ public:
 
 		free(blockThread);
 
-		if(verbose)
+		if(verbose > 1)
 		{
-			cout << "\n\n***************************************************************";
+			cout << "***************************************************************";
 			cout << "\nTHREAD INFORMATIONS:\n";
 			cout << "Number of blocks: " << n_blocks << endl;
 			cout << "Number of threads: " << n_threads << endl;
@@ -438,7 +612,7 @@ public:
 		/* ********************************************************************************************************************************************* */
 		/* ******************** Simulation ******************** */
 
-		if(verbose)
+		if(verbose > 1)
 		{
 			print(left_matrix, right_matrix, cs_vector, c_vector, t_vector, atol_vector, M_0, M_feed, modelkind, volume);
 			cout << "\n\n###############################################################";
@@ -478,19 +652,31 @@ public:
 		cudaEventCreate(&stop);
 		cudaEventRecord(start, 0);
 
-		if(verbose)
+		if(verbose > 1)
 		{
 			cout << "****Start simulation***" << endl;
 		}
 
+		folder1 = folder + slash + "output" + slash + "ProgressSimulation";
+		fd=fopen(folder1.c_str(), "w");
+		if( fd==NULL )
+		{
+			perror("Error open output file ProgressSimulation");
+			exit(-11);
+		}
+
+		double t_max = t_vector_point[Nb_times-1];
+
 		while(i < (Nb_times))
 		{
+			fprintf(fd, "%.4e\n", t/t_max);
+			
 			if(fabs(t1 - t) < 1e-5)
 			{
 				saveDinamic<T><<<n_blocksDin, n_threadsDin>>>(Nb_speciesSaving, i, cs_vectorDEV, dev_y1, dinamicDEV);
 				cudaDeviceSynchronize();
 				i++;
-				if(verbose)
+				if(verbose > 1)
 				{
 					if (i == Nb_times/4)
 						cout << "****1/4 of simulation***" << endl;
@@ -499,6 +685,7 @@ public:
 					else if (i == 3*Nb_times/4)
 						cout << "****3/4 of simulation***" << endl;
 				}
+
 				t1 = t_vector_point[i];
 			}
 
@@ -728,6 +915,7 @@ public:
 					CUDA_CHECK_RETURN(cudaMemcpy(dev_y2, dev_y1, Nb_species * sizeof(T),cudaMemcpyDeviceToDevice));
 					CUDA_CHECK_RETURN(cudaMemcpy(dev_y1, dev_y_v, Nb_species * sizeof(T),cudaMemcpyDeviceToDevice));
 
+
 					t = t + dt;
 				}
 			}
@@ -735,12 +923,15 @@ public:
 			if(numStep < bdf)
 				numStep++;
 		}
+
+		fclose(fd);
+
 		cudaEventRecord( stop, 0 );
 		cudaEventSynchronize( stop );
 		float tempo = 0;
 		cudaEventElapsedTime( &tempo, start, stop );
 
-		if(verbose)
+		if(verbose > 1)
 		{
 			cout << "****End simulation***" << endl;
 		}
@@ -768,21 +959,21 @@ public:
 
 		for (int i = 0; i < Nb_times; i++)
 		{
-			fprintf (fd, "%g\t", t_vector_point[i]);
+			fprintf (fd, "%.4e\t", t_vector_point[i]);
 			pos = i * Nb_speciesSaving;
 			for(int j = 0; j < Nb_speciesSaving; j++)
 			{
-				fprintf(fd, "%.8g\t", dinamic[pos]);
+				fprintf(fd, "%.4e\t", dinamic[pos]);
 				pos++;
 			}
 			fprintf(fd, "\n");
 		}
 		fclose(fd);
 
-		if(verbose)
+		if(verbose > 1)
 		{
-			cout << "\n\nEnd ode solver\n" ;
-			cout << "###############################################################\n\n";
+			cout << "\nEnd ode solver\n" ;
+			cout << "###############################################################\n";
 
 		}
 		/* ********************************************************************************************************************************************* */
@@ -794,7 +985,7 @@ public:
 		T avo = 6.022e23;
 		T conv =  volume*avo;
 
-		if(verbose)
+		if(verbose > 1)
 		{
 			cout << "\n\n***************************************************************";
 			cout << "\nConvertion initial conditions and feeds with volume: " << volume << endl;
@@ -848,23 +1039,6 @@ public:
 		for(int j = 0; j < A[0].size(); j++)
 		{
 			if(A[i][j] > 0)
-				count++;
-		}
-		return count;
-	}
-
-	int count_nonzeroRows(vector<vector<short> > A)
-	{
-		int count = 0;
-		for(int i = 0; i < A.size(); i++)
-		{
-			int somma = 0;
-			for(int j = 0; j < A[0].size(); j++)
-			{
-				if(A[i][j] > 0)
-					somma++;
-			}
-			if(somma > 0)
 				count++;
 		}
 		return count;
@@ -930,6 +1104,31 @@ public:
 		}
 	}
 
+	void create_sparse2(short2* sparse, vector<vector<short> > matrix, short2* offset)
+	{
+		int row = (int) matrix.size();
+		int col = (int) matrix[0].size();
+		int count = 0;
+		int index_old = 0;
+		for(int i=0; i < row; i++)
+		{
+			short index = 0;
+			for(int j=0; j < col; j++)
+			{
+				if(matrix[i][j] != 0)
+				{
+					sparse[count].x = j;
+					sparse[count].y = matrix[i][j];
+					count++;
+					index++;
+				}
+			}
+			offset[i].x = index_old;
+			offset[i].y = index_old + index;
+			index_old = index_old + index;
+		}
+	}
+
 
 	/* ******************** Print methods ******************** */
 
@@ -966,20 +1165,20 @@ public:
 		//cout << "\natol_vector" << "\n";
 		//printArray(atol_vector1);
 
-		cout << "\n\n***************************************************************";
+		cout << "\n***************************************************************";
 		cout << "\nThe model has " << left_matrix[0].size() << " species and " << left_matrix.size() << " reactions"<<"\n";
 
 		if(!modelkind1)
 		{
-			cout << "\n\n***************************************************************";
-			cout << "\nmodelkind = deterministic" << "\n";
+			cout << "\n***************************************************************\n";
+			cout << "modelkind = deterministic" << "\n";
 		}
 		else
 		{
-			cout << "\n\n***************************************************************";
-			cout << "\nmodelkind = stochastic" << "\n";
-			cout << "\n\n***************************************************************";
-			cout << "\nvolume = " << volume <<"\n";
+			cout << "\n***************************************************************\n";
+			cout << "modelkind = stochastic" << "\n";
+			cout << "\n***************************************************************\n";
+			cout << "volume = " << volume <<"\n";
 		}
 
 	}
